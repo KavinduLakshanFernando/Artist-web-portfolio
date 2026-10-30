@@ -271,14 +271,13 @@ button {
 
 .overlap-section {
   position: sticky;
-  top: 80px;
-  min-height: calc(100vh - 80px);
-  height: calc(100vh - 80px);
+  top: 0;
+  height: 100vh;
+  min-height: 650px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: sticky;
-  padding: 2.25rem 0;
+  padding: 0;
   overflow: hidden;
   border-radius: 0;
   box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.55);
@@ -832,6 +831,18 @@ footer.overlap-footer {
   z-index: 10;
   border-radius: 0;
   box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.65);
+}
+
+@media (min-width: 901px) {
+  .overlap-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  footer.overlap-footer {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
 }
 
 /* Mobile responsive adjustments */

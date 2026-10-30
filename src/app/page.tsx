@@ -62,6 +62,17 @@ export default function Home() {
   const dragStartX = useRef(0);
   const dragStartProgress = useRef(0);
 
+  // Full-page One-Scroll Controller Refs
+  const isTransitioningRef = useRef(false);
+  const activeSectionRef = useRef(0);
+  const touchStartY = useRef(0);
+  const touchStartX = useRef(0);
+
+  // Synchronize ref with activeSection state
+  useEffect(() => {
+    activeSectionRef.current = activeSection;
+  }, [activeSection]);
+
   // Reverse Scroll 3 horizontal stream items populated from 40 gallery images
   const row1Items = GALLERY_IMAGES_DATA.filter((_, i) => i % 3 === 0);
   const row2Items = GALLERY_IMAGES_DATA.filter((_, i) => i % 3 === 1);
@@ -91,18 +102,36 @@ export default function Home() {
     };
   }, [row1Items.length, row2Items.length, row3Items.length]);
 
-  // Smooth scroll to a specific section by index
+  // Smoothly glide directly to a specific section by index (with animation lock)
   const scrollToSection = (index: number) => {
     if (typeof window === 'undefined') return;
-    const targetY = index * window.innerHeight;
-    window.scrollTo({
-      top: targetY,
-      behavior: 'smooth',
-    });
-    setActiveSection(index);
-    if (typeof window !== 'undefined') {
-      window.history.replaceState(null, '', `#${SECTIONS[index].anchor}`);
+
+    const maxIndex = SECTIONS.length; // 0..5: Sections, 6: Footer
+    const target = Math.max(0, Math.min(maxIndex, index));
+    isTransitioningRef.current = true;
+
+    if (target < SECTIONS.length) {
+      const targetY = target * window.innerHeight;
+      window.scrollTo({
+        top: targetY,
+        behavior: 'smooth',
+      });
+      setActiveSection(target);
+      setIsAtBottom(false);
+      window.history.replaceState(null, '', `#${SECTIONS[target].anchor}`);
+    } else {
+      // Transition to Footer
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+      setIsAtBottom(true);
     }
+
+    // Cooldown duration matches smooth scroll easing curve (800ms)
+    setTimeout(() => {
+      isTransitioningRef.current = false;
+    }, 800);
   };
 
   // Check URL hash on initial load (e.g. #one, #two, #three...)
@@ -120,51 +149,125 @@ export default function Home() {
     }
   }, []);
 
-  // Track active section on window scroll
+  // Track active section on window scroll (sync fallback when user drags scrollbar)
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY;
       const sectionHeight = window.innerHeight;
-      const index = Math.min(
-        SECTIONS.length - 1,
-        Math.max(0, Math.round(scrollPos / sectionHeight))
-      );
-      if (index !== activeSection) {
-        setActiveSection(index);
-      }
-
-      // Check if user has scrolled near bottom into footer
-      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 220;
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 180;
       setIsAtBottom(atBottom);
+
+      if (!isTransitioningRef.current && !atBottom) {
+        const index = Math.min(
+          SECTIONS.length - 1,
+          Math.max(0, Math.round(scrollPos / sectionHeight))
+        );
+        if (index !== activeSectionRef.current) {
+          setActiveSection(index);
+        }
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeSection]);
+  }, []);
 
-  // Dedicated mouse wheel handler on Section 04 reverse scroll grid
-  // Allows user to smoothly scroll through all 40 artworks without the page jumping away
+  // Single Scroll Wheel Controller: 1 Scroll Tick = 1 Full Section Transition
+  useEffect(() => {
+    const handleGlobalWheel = (e: WheelEvent) => {
+      // If modal or lightbox is open, allow normal scrolling inside modal
+      if (selectedArtwork || selectedGalleryItem) return;
+
+      // Ignore predominantly horizontal gestures (e.g. 2-finger sideways trackpad swipes)
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.5) return;
+
+      // Minimum sensitivity threshold to avoid jittery trackpad noise
+      if (Math.abs(e.deltaY) < 18) return;
+
+      // Prevent native incremental pixel-by-pixel scrolling so section doesn't get stuck halfway
+      e.preventDefault();
+
+      // If already animating to a section, ignore further momentum wheel ticks
+      if (isTransitioningRef.current) return;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const current = activeSectionRef.current;
+
+      if (isAtBottom) {
+        if (direction < 0) {
+          // Scroll up from footer back into Section 06
+          scrollToSection(SECTIONS.length - 1);
+        }
+        return;
+      }
+
+      // If at last section (index 5) and scrolling down, glide to footer (index 6)
+      // Otherwise glide to next/previous section
+      const nextTarget = current + direction;
+      scrollToSection(nextTarget);
+    };
+
+    window.addEventListener('wheel', handleGlobalWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleGlobalWheel);
+  }, [selectedArtwork, selectedGalleryItem, isAtBottom]);
+
+  // Touch Gesture Controller (Mobile & Tablet: 1 Swipe = 1 Full Section Transition)
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      if (selectedArtwork || selectedGalleryItem) return;
+      touchStartY.current = e.touches[0].clientY;
+      touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (selectedArtwork || selectedGalleryItem) return;
+      if (isTransitioningRef.current) return;
+
+      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
+      const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+
+      // Require significant vertical movement (45px) and mostly vertical angle
+      if (Math.abs(deltaY) > 45 && Math.abs(deltaY) > Math.abs(deltaX) * 1.2) {
+        const direction = deltaY > 0 ? 1 : -1;
+        const current = activeSectionRef.current;
+
+        if (isAtBottom) {
+          if (direction < 0) {
+            scrollToSection(SECTIONS.length - 1);
+          }
+          return;
+        }
+
+        scrollToSection(current + direction);
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [selectedArtwork, selectedGalleryItem, isAtBottom]);
+
+  // Section 04 horizontal stream scrub via trackpad horizontal gestures
   useEffect(() => {
     const grid = gridContainerRef.current;
     if (!grid) return;
 
-    const handleGridWheel = (e: WheelEvent) => {
-      // If at boundaries and moving outward, allow normal page scroll
-      const atTop = galleryProgress <= 0.005 && (e.deltaY < 0 || e.deltaX < 0);
-      const atBottom = galleryProgress >= 0.995 && (e.deltaY > 0 || e.deltaX > 0);
-
-      if (!atTop && !atBottom) {
+    const handleGridHorizontalWheel = (e: WheelEvent) => {
+      // Only process horizontal scroll gestures on Section 4
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault();
         e.stopPropagation();
-        const primaryDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-        const delta = primaryDelta * 0.0003;
+        const delta = e.deltaX * 0.0003;
         setGalleryProgress((prev) => Math.max(0, Math.min(1, prev + delta)));
       }
     };
 
-    grid.addEventListener('wheel', handleGridWheel, { passive: false });
-    return () => grid.removeEventListener('wheel', handleGridWheel);
-  }, [galleryProgress]);
+    grid.addEventListener('wheel', handleGridHorizontalWheel, { passive: false });
+    return () => grid.removeEventListener('wheel', handleGridHorizontalWheel);
+  }, []);
 
   // Reduced Speed Auto-glide animation: slowly floats the horizontal streams in reverse directions
   // Automatically pauses when hovered so users can inspect artworks comfortably
@@ -212,35 +315,42 @@ export default function Home() {
     };
   }, [activeSection]);
 
-  // Keyboard navigation (ArrowDown, ArrowUp, PageDown, PageUp, Home, End)
+  // Keyboard navigation (ArrowDown, ArrowUp, PageDown, PageUp, Space, Home, End)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+      if (selectedArtwork || selectedGalleryItem) return;
 
-      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) {
         e.preventDefault();
-        if (activeSection < SECTIONS.length - 1) {
-          scrollToSection(activeSection + 1);
-        } else {
-          window.scrollBy({ top: 350, behavior: 'smooth' });
+        if (!isTransitioningRef.current) {
+          const current = activeSectionRef.current;
+          if (!isAtBottom) {
+            scrollToSection(current + 1);
+          }
         }
-      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) {
         e.preventDefault();
-        if (activeSection > 0) {
-          scrollToSection(activeSection - 1);
+        if (!isTransitioningRef.current) {
+          const current = activeSectionRef.current;
+          if (isAtBottom) {
+            scrollToSection(SECTIONS.length - 1);
+          } else {
+            scrollToSection(current - 1);
+          }
         }
       } else if (e.key === 'Home') {
         e.preventDefault();
         scrollToSection(0);
       } else if (e.key === 'End') {
         e.preventDefault();
-        scrollToSection(SECTIONS.length - 1);
+        scrollToSection(SECTIONS.length);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSection]);
+  }, [selectedArtwork, selectedGalleryItem, isAtBottom]);
 
   // Pointer drag support for touch and mouse horizontal gliding
   const handlePointerDown = (e: React.PointerEvent) => {
