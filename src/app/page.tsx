@@ -18,6 +18,11 @@ import {
   SlidersHorizontal,
   Compass,
   Layers,
+  Calendar,
+  Palette,
+  BookOpen,
+  Newspaper,
+  ArrowUp,
 } from 'lucide-react';
 import {
   ARTWORKS_DATA,
@@ -1111,42 +1116,33 @@ export default function Home() {
         >
           <div className="site-container section-content-wrap">
             
-            {/* Header with Link to Dedicated Filterable Gallery */}
-            <div
-              className="reveal-content reveal-delay-1"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '1rem',
-                flexShrink: 0,
-              }}
-            >
-              <div>
-                <span className="art-badge" style={{ marginBottom: '0.25rem', background: 'rgba(133, 95, 16, 0.12)', borderColor: 'rgba(133, 95, 16, 0.35)', color: '#855f10' }}>
-                  <Sparkles size={11} />
-                  <span>SCROLL-DRIVEN REVERSE ANIMATION</span>
-                </span>
-                <h2 className="font-serif" style={{ fontSize: 'clamp(1.5rem, 2.8vw, 2.2rem)', color: '#1a1918', lineHeight: 1.1 }}>
+            {/* Redesigned Gallery Section Header */}
+            <div className="section4-editorial-header reveal-content reveal-delay-1">
+              <div className="section4-header-text">
+                <div className="section4-badge-row">
+                  <span className="art-badge" style={{ background: 'rgba(133, 95, 16, 0.12)', borderColor: 'rgba(133, 95, 16, 0.35)', color: '#855f10' }}>
+                    <Sparkles size={11} />
+                    <span>04 // LIVING ATELIER REVERSE STREAM</span>
+                  </span>
+                  <span className="section4-count-pill">
+                    40 Curated Masterworks
+                  </span>
+                </div>
+                
+                <h2 className="font-serif section4-title">
                   Atelier Reverse-Scroll Gallery
                 </h2>
+                
+                <p className="section4-desc">
+                  Opposing continuous kinetic streams spanning fine pencil art, 24K gold impasto, and studio photography.
+                </p>
               </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '0.78rem', color: '#68645e', display: 'none' }} className="desktop-only">
-                  Scroll mouse wheel to glide columns in opposing directions
-                </span>
+
+              <div className="section4-header-actions">
                 <Link
                   href="/gallery"
-                  className="btn-outline"
-                  style={{
-                    padding: '0.45rem 1rem',
-                    fontSize: '0.75rem',
-                    background: '#ffffff',
-                    borderColor: 'rgba(0, 0, 0, 0.18)',
-                    color: '#1a1918',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                  }}
+                  className="section4-catalog-btn"
+                  title="Explore categorized masterworks collection"
                 >
                   <span>Filter by Category</span>
                   <ExternalLink size={13} />
@@ -1154,142 +1150,86 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Interactive Scrubber & Status Header */}
-            <div
-              className="reveal-content reveal-delay-2 reverse-controls-bar"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1.25rem',
-                marginBottom: '1rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.75)',
-                padding: '0.6rem 1rem',
-                borderRadius: '8px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
-                flexWrap: 'wrap',
-                flexShrink: 0,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: '160px' }}>
-                <SlidersHorizontal size={14} style={{ color: '#855f10' }} />
-                <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#1a1918' }}>
-                  Horizontal Flow: {Math.round(galleryProgress * 100)}%
-                </span>
-              </div>
-
-              {/* Range Scrubber to instantly glide across all 40 artworks */}
-              <div style={{ flex: 1, minWidth: '160px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '0.68rem', color: '#8c887b', fontWeight: 600 }}>START</span>
-                <input
-                  type="range"
-                  className="reverse-scrubber"
-                  min="0"
-                  max="1"
-                  step="0.001"
-                  value={galleryProgress}
-                  onChange={(e) => setGalleryProgress(parseFloat(e.target.value))}
-                  aria-label="Horizontal reverse stream scrubber"
-                />
-                <span style={{ fontSize: '0.68rem', color: '#8c887b', fontWeight: 600 }}>END (ALL 40)</span>
-              </div>
-
-              {/* Controls: Speed Toggle, Play/Pause, Step Prev/Next, Reset */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  className="desktop-only"
-                  onClick={() => setSpeedMultiplier((prev) => (prev === 1 ? 1.5 : prev === 1.5 ? 0.6 : 1))}
-                  style={{
-                    padding: '0.35rem 0.65rem',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    backgroundColor: '#ffffff',
-                    color: '#855f10',
-                    border: '1px solid rgba(133, 95, 16, 0.25)',
-                    cursor: 'pointer',
-                  }}
-                  title="Toggle flow speed"
-                >
-                  Speed: {speedMultiplier === 1 ? 'Smooth (1x)' : speedMultiplier === 1.5 ? 'Fast (1.5x)' : 'Slow (0.6x)'}
-                </button>
-
+            {/* Redesigned Haute Gallery Stream Toolbar */}
+            <div className="reveal-content reveal-delay-2 gallery-stream-toolbar">
+              {/* Left: Motion Status & Play/Pause Interactive Pill */}
+              <div className="stream-toolbar-status">
                 <button
                   type="button"
                   onClick={() => setIsAutoGliding((prev) => !prev)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    padding: '0.35rem 0.75rem',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    backgroundColor: isAutoGliding ? '#855f10' : '#ffffff',
-                    color: isAutoGliding ? '#ffffff' : '#1a1918',
-                    border: '1px solid rgba(0,0,0,0.15)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                  title={isAutoGliding ? 'Pause automatic flow' : 'Start automatic flow'}
+                  className={`stream-motion-pill ${isAutoGliding ? 'is-playing' : 'is-paused'}`}
+                  title={isAutoGliding ? 'Pause stream glide' : 'Resume automatic stream flow'}
                 >
+                  <span className="stream-pulse-dot" />
                   {isAutoGliding ? <Pause size={12} /> : <Play size={12} />}
-                  <span>{isAutoGliding ? 'Auto Gliding' : 'Paused'}</span>
+                  <span>{isAutoGliding ? 'Auto-Flow Active' : 'Flow Paused'}</span>
                 </button>
 
+                <div className="stream-flow-indicator">
+                  <span className="stream-flow-label">Flow</span>
+                  <span className="stream-flow-val">{Math.round(galleryProgress * 100)}%</span>
+                </div>
+              </div>
+
+              {/* Center: Sleek luxury progress bar / scrub track */}
+              <div className="stream-scrub-wrap">
+                <span className="stream-scrub-bound">START</span>
+                <div className="stream-scrub-track-container">
+                  <input
+                    type="range"
+                    className="stream-luxury-scrubber"
+                    min="0"
+                    max="1"
+                    step="0.001"
+                    value={galleryProgress}
+                    onChange={(e) => setGalleryProgress(parseFloat(e.target.value))}
+                    aria-label="Art stream position slider"
+                  />
+                  <div
+                    className="stream-scrub-fill"
+                    style={{ width: `${Math.round(galleryProgress * 100)}%` }}
+                  />
+                </div>
+                <span className="stream-scrub-bound">END (40)</span>
+              </div>
+
+              {/* Right: Fine-tuning Controls (Desktop and Tablet) */}
+              <div className="stream-toolbar-controls">
                 <button
                   type="button"
-                  className="desktop-only"
-                  onClick={() => setGalleryProgress((p) => Math.max(0, p - 0.12))}
-                  style={{
-                    padding: '0.35rem 0.6rem',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    backgroundColor: '#ffffff',
-                    color: '#1a1918',
-                    border: '1px solid rgba(0,0,0,0.15)',
-                    cursor: 'pointer',
-                  }}
-                  title="Glide Left"
+                  className="stream-ctrl-btn desktop-only"
+                  onClick={() => setSpeedMultiplier((prev) => (prev === 1 ? 1.5 : prev === 1.5 ? 0.6 : 1))}
+                  title="Toggle flow speed"
                 >
-                  <ChevronLeft size={13} />
+                  Speed: {speedMultiplier === 1 ? '1.0x' : speedMultiplier === 1.5 ? '1.5x' : '0.6x'}
                 </button>
 
                 <button
                   type="button"
-                  className="desktop-only"
-                  onClick={() => setGalleryProgress((p) => Math.min(1, p + 0.12))}
-                  style={{
-                    padding: '0.35rem 0.6rem',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    backgroundColor: '#ffffff',
-                    color: '#1a1918',
-                    border: '1px solid rgba(0,0,0,0.15)',
-                    cursor: 'pointer',
-                  }}
-                  title="Glide Right"
+                  className="stream-ctrl-btn stream-step-btn"
+                  onClick={() => setGalleryProgress((p) => Math.max(0, p - 0.1))}
+                  title="Glide stream backward"
+                  aria-label="Glide backward"
                 >
-                  <ChevronRight size={13} />
+                  <ChevronLeft size={14} />
                 </button>
 
                 <button
                   type="button"
-                  className="desktop-only"
+                  className="stream-ctrl-btn stream-step-btn"
+                  onClick={() => setGalleryProgress((p) => Math.min(1, p + 0.1))}
+                  title="Glide stream forward"
+                  aria-label="Glide forward"
+                >
+                  <ChevronRight size={14} />
+                </button>
+
+                <button
+                  type="button"
+                  className="stream-ctrl-btn desktop-only"
                   onClick={() => setGalleryProgress(0)}
-                  style={{
-                    padding: '0.35rem 0.6rem',
-                    borderRadius: '4px',
-                    fontSize: '0.72rem',
-                    fontWeight: 600,
-                    backgroundColor: '#ffffff',
-                    color: '#68645e',
-                    border: '1px solid rgba(0,0,0,0.15)',
-                    cursor: 'pointer',
-                  }}
-                  title="Reset to Start"
+                  title="Reset to beginning"
+                  aria-label="Reset position"
                 >
                   <RotateCcw size={12} />
                 </button>
@@ -1453,22 +1393,12 @@ export default function Home() {
             </div>
 
             {/* Bottom info caption */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: '0.75rem',
-                flexShrink: 0,
-                fontSize: '0.72rem',
-                color: '#68645e',
-              }}
-            >
+            <div className="section4-footer-caption">
               <span>
-                Displaying <strong>40 Artworks</strong> across 3 horizontal reverse streams (Pencil Art, Painting Art, Photography).
+                Displaying <strong>40 Artworks</strong> across 3 continuous reverse streams.
               </span>
-              <span>
-                Tranquil slow pace • Hover artwork to pause • Click any image to view 4K full-screen
+              <span className="desktop-only">
+                Tranquil kinetic pace • Hover artwork to pause • Click any image to view 4K full-screen
               </span>
             </div>
           </div>
@@ -1639,88 +1569,82 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Naturally Scrollable Section Quick Links */}
-                <div className="reveal-content reveal-delay-3" style={{ marginBottom: '1.25rem' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#68645e', textTransform: 'uppercase', letterSpacing: '0.12em', display: 'block', marginBottom: '0.65rem', fontWeight: 600 }}>
-                    Archives Directory:
-                  </span>
-                  <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    <Link
-                      href="/exhibition"
-                      style={{
-                        padding: '0.4rem 0.85rem',
-                        background: '#ffffff',
-                        border: '1px solid rgba(0, 0, 0, 0.15)',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        color: '#1a1918',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      Exhibitions Archive ↗
-                    </Link>
-                    <Link
-                      href="/workshops"
-                      style={{
-                        padding: '0.4rem 0.85rem',
-                        background: '#ffffff',
-                        border: '1px solid rgba(0, 0, 0, 0.15)',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        color: '#1a1918',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      Workshops ↗
-                    </Link>
-                    <Link
-                      href="/shop"
-                      style={{
-                        padding: '0.4rem 0.85rem',
-                        background: '#ffffff',
-                        border: '1px solid rgba(0, 0, 0, 0.15)',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        color: '#1a1918',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      Editions Shop ↗
-                    </Link>
-                    <Link
-                      href="/publications"
-                      style={{
-                        padding: '0.4rem 0.85rem',
-                        background: '#ffffff',
-                        border: '1px solid rgba(0, 0, 0, 0.15)',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        color: '#1a1918',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      Publications ↗
-                    </Link>
-                    <Link
-                      href="/press"
-                      style={{
-                        padding: '0.4rem 0.85rem',
-                        background: '#ffffff',
-                        border: '1px solid rgba(0, 0, 0, 0.15)',
-                        borderRadius: '4px',
-                        fontSize: '0.75rem',
-                        color: '#1a1918',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      Press Reviews ↗
-                    </Link>
+                {/* Haute Curatorial Archives Directory */}
+                <div className="reveal-content reveal-delay-3 curatorial-directory-container">
+                  <div className="curatorial-dir-header-bar">
+                    <span className="curatorial-dir-eyebrow">
+                      Archives Directory & Study:
+                    </span>
+                    <span className="curatorial-dir-count-pill">
+                      5 Portals
+                    </span>
+                  </div>
+
+                  <div className="curatorial-directory-grid">
+                    {[
+                      {
+                        title: 'Exhibitions Archive',
+                        subtitle: 'Solo & Retrospective Shows',
+                        href: '/exhibition',
+                        icon: Calendar,
+                      },
+                      {
+                        title: 'Master Workshops',
+                        subtitle: 'Mineral & Gilding Sessions',
+                        href: '/workshops',
+                        icon: Palette,
+                      },
+                      {
+                        title: 'Editions & Shop',
+                        subtitle: 'Signed Catalog & Lithographs',
+                        href: '/shop',
+                        icon: ShoppingBag,
+                      },
+                      {
+                        title: 'Publications & Books',
+                        subtitle: 'Curatorial Catalogues Raisonnés',
+                        href: '/publications',
+                        icon: BookOpen,
+                      },
+                      {
+                        title: 'Press & Critical Discourse',
+                        subtitle: 'Artforum, Frieze & Reviews',
+                        href: '/press',
+                        icon: Newspaper,
+                      },
+                    ].map((item, idx) => {
+                      const IconComp = item.icon;
+                      return (
+                        <Link
+                          key={idx}
+                          href={item.href}
+                          className="curatorial-dir-card"
+                        >
+                          <div className="curatorial-dir-icon">
+                            <IconComp size={15} />
+                          </div>
+                          <div className="curatorial-dir-text">
+                            <div className="curatorial-dir-row">
+                              <span className="curatorial-dir-title">{item.title}</span>
+                              <ExternalLink size={12} className="curatorial-dir-arrow" />
+                            </div>
+                            <span className="curatorial-dir-sub">{item.subtitle}</span>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
 
-                <div className="reveal-content reveal-delay-4 section-actions-row">
-                  <button onClick={() => scrollToSection(0)} className="btn-outline" style={{ background: '#ffffff', borderColor: 'rgba(0, 0, 0, 0.2)', color: '#1a1918', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-                    <span>▲ Back to Top (#one)</span>
+                {/* Bespoke Return to Atelier Action */}
+                <div className="reveal-content reveal-delay-4 section-return-wrap">
+                  <button
+                    onClick={() => scrollToSection(0)}
+                    className="atelier-return-btn"
+                    aria-label="Return to Atelier Entrance"
+                  >
+                    <ArrowUp size={14} className="return-icon" />
+                    <span>Return to Atelier Entrance</span>
                   </button>
                 </div>
               </div>
