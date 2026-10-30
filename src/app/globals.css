@@ -609,8 +609,6 @@ body[data-section-theme="dark"] header .mobile-menu-btn {
   user-select: none;
   cursor: grab;
   padding: 0.5rem 0;
-  -webkit-mask-image: linear-gradient(to right, transparent, black 3.5%, black 96.5%, transparent);
-  mask-image: linear-gradient(to right, transparent, black 3.5%, black 96.5%, transparent);
 }
 
 .horizontal-streams-container:active {
@@ -1227,6 +1225,105 @@ footer.overlap-footer {
   border: 1px solid rgba(0, 0, 0, 0.12);
   background-color: #ffffff;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================================
+   SECTION 03: PAINTING BACKGROUND VIDEO & ATMOSPHERIC OVERLAY
+   ======================================================== */
+.section-video-bg-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.section-video-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  filter: brightness(0.68) contrast(1.08);
+  transform: scale(1.02);
+}
+
+.section-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(14, 15, 19, 0.78) 0%,
+    rgba(18, 19, 24, 0.65) 50%,
+    rgba(12, 13, 17, 0.82) 100%
+  );
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+/* ========================================================
+   SECTION 06: ATELIER ARCHIVE HUB & ONE-SIDE BRUSHES PLATE
+   ======================================================== */
+#six {
+  background-color: #f5f5f5 !important;
+  background-image: url('/images/section6_brushes_bg.jpg') !important;
+  background-repeat: no-repeat !important;
+  background-position: right bottom !important;
+  background-size: contain !important;
+}
+
+@media (min-width: 1024px) {
+  #six .section-content-wrap {
+    /* Keep all cards on left/center, dedicating the right side to uncropped brushes */
+    padding-right: clamp(340px, 34vw, 560px) !important;
+  }
+
+  #six .archive-hub-grid {
+    grid-template-columns: 1.15fr 0.95fr !important;
+    gap: 2.25rem !important;
+    max-width: 1000px !important;
+  }
+
+  #six .curatorial-directory-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.55rem !important;
+  }
+
+  #six .curatorial-dir-card:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  #six .contact-card-glass {
+    padding: 1.6rem 1.85rem !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  #six {
+    background-position: right bottom !important;
+    background-size: clamp(200px, 26vw, 290px) auto !important;
+    background-repeat: no-repeat !important;
+  }
+
+  #six .section-content-wrap {
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #six {
+    background-position: right bottom !important;
+    background-size: 135px auto !important;
+    background-repeat: no-repeat !important;
+  }
+
+  #six .section-content-wrap {
+    padding-right: 0 !important;
+  }
 }
 
 /* ========================================================
