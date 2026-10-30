@@ -1,0 +1,1214 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* White Theme / Gallery Alabaster & Linen */
+  --bg-primary: #fcfbfa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f5f4ef;
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-glass-card: rgba(255, 255, 255, 0.95);
+  
+  --text-main: #121215;
+  --text-muted: #58554e;
+  --text-subtle: #8a8579;
+  
+  --accent-gold: #9d7219;
+  --accent-gold-light: #b88628;
+  --accent-gold-dim: rgba(157, 114, 25, 0.08);
+  --accent-red: #8b3426;
+  --accent-lapis: #1c3d6c;
+  --accent-cream: #2d2a24;
+  
+  --border-light: rgba(0, 0, 0, 0.07);
+  --border-gold: rgba(157, 114, 25, 0.25);
+  
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Cinzel', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  
+  --shadow-lux: 0 20px 50px -15px rgba(0, 0, 0, 0.08), 0 5px 15px -3px rgba(0, 0, 0, 0.04);
+  --shadow-gold: 0 10px 30px -5px rgba(157, 114, 25, 0.12);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+  overflow-x: clip;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 10% 15%, rgba(157, 114, 25, 0.025) 0%, transparent 40%),
+    radial-gradient(circle at 90% 70%, rgba(28, 61, 108, 0.02) 0%, transparent 45%);
+}
+
+/* Subtle Art Paper Grain Texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+  z-index: 9999;
+}
+
+/* Typography Utility Classes */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* Gold Text Shimmer for White Theme */
+.gold-shimmer {
+  background: linear-gradient(135deg, #121215 15%, #9d7219 45%, #b88628 75%, #121215 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 8s ease infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Glassmorphism Surface for White Theme */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lux);
+}
+
+.glass-panel-gold {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  box-shadow: var(--shadow-gold);
+}
+
+/* Custom Scrollbar for White Theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f4ef;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1cdc4;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-gold);
+}
+
+/* Links & Buttons */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+/* Container */
+.site-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .site-container {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .site-container {
+    padding: 0 3.5rem;
+  }
+}
+
+/* Custom Button Styles - White / Fine Art Editorial Theme */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #121215;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.75rem;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border: 1px solid transparent;
+}
+
+.btn-gold:hover {
+  background: #9d7219;
+  box-shadow: 0 6px 20px rgba(157, 114, 25, 0.25);
+  transform: translateY(-2px);
+  color: #ffffff;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  color: var(--text-main);
+  border: 1px solid var(--border-gold);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.75rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.btn-outline:hover {
+  background: var(--accent-gold-dim);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-2px);
+}
+
+/* Badge */
+.art-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  background: var(--accent-gold-dim);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+}
+
+/* Image Hover Zoom Container */
+.art-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #f3f1ec;
+  border: 1px solid var(--border-light);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.art-frame:hover {
+  border-color: var(--border-gold);
+  box-shadow: var(--shadow-card);
+}
+
+.art-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.art-frame:hover img {
+  transform: scale(1.04);
+}
+
+/* Overlapping / Stacking Section Animation Experience */
+.overlap-container {
+  position: relative;
+  width: 100%;
+}
+
+.overlap-section {
+  position: sticky;
+  top: 80px;
+  min-height: calc(100vh - 80px);
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: sticky;
+  padding: 2.25rem 0;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  will-change: transform;
+}
+
+/* First section sits flush without top rounded corners */
+.overlap-section:first-child {
+  border-radius: 0;
+  box-shadow: none;
+  border-top: none;
+}
+
+/* Specific theme top borders & shadows for striking overlap contrast */
+.overlap-section[data-theme="light"],
+.overlap-section:nth-child(2),
+.overlap-section:nth-child(5) {
+  box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.14);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Ascending stacking order so each section slides directly over the previous one */
+.overlap-section:nth-child(1) { z-index: 10; }
+.overlap-section:nth-child(2) { z-index: 20; }
+.overlap-section:nth-child(3) { z-index: 30; }
+.overlap-section:nth-child(4) { z-index: 40; }
+.overlap-section:nth-child(5) { z-index: 50; }
+.overlap-section:nth-child(6) { z-index: 60; }
+
+/* Global Footer overlapping the final section */
+footer {
+  position: relative;
+  z-index: 70;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.22);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Staggered Content Reveal Animations on Section Entry */
+.reveal-content {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.is-active .reveal-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 {
+  transition-delay: 0.15s;
+}
+
+.reveal-delay-2 {
+  transition-delay: 0.32s;
+}
+
+.reveal-delay-3 {
+  transition-delay: 0.48s;
+}
+
+.reveal-delay-4 {
+  transition-delay: 0.65s;
+}
+
+/* Vertical Scroll Snap Progress Rail & Anchor Navigation */
+.snap-progress-rail {
+  position: fixed;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 850;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.15rem;
+}
+
+.snap-track {
+  position: absolute;
+  right: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+body[data-section-theme="light"] .snap-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.snap-track-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, #f3e5ab, #d4af37);
+  border-radius: 2px;
+  transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.snap-nav-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0.15rem 0;
+}
+
+.snap-nav-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  pointer-events: none;
+  background: rgba(18, 18, 22, 0.95);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+body[data-section-theme="light"] .snap-nav-label {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text-main);
+  border-color: var(--border-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.snap-nav-item:hover .snap-nav-label,
+.snap-nav-item.active .snap-nav-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.snap-nav-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: rgba(18, 18, 22, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body[data-section-theme="light"] .snap-nav-dot {
+  border-color: rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+}
+
+.snap-nav-item.active .snap-nav-dot {
+  border-color: #d4af37;
+  background: #d4af37;
+  transform: scale(1.3);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.7);
+}
+
+.snap-nav-dot-inner {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.25s ease;
+}
+
+.snap-nav-item.active .snap-nav-dot-inner {
+  background-color: #121215;
+}
+
+/* Reduced Motion Mode Support */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .reveal-content {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .snap-track-fill {
+    transition: none !important;
+  }
+}
+
+/* Responsive Mobile Layout: Prevent Clipping */
+@media (max-width: 820px) {
+  .snap-progress-rail {
+    display: none;
+  }
+  .overlap-section {
+    position: relative !important;
+    top: 0 !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 3rem 0;
+  }
+}
+
+/* Dynamic Header Adaptive Theme */
+body[data-section-theme="dark"] header {
+  background-color: rgba(10, 10, 14, 0.9) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+body[data-section-theme="dark"] header .font-display {
+  color: #ffffff !important;
+}
+
+body[data-section-theme="dark"] header .desktop-nav a {
+  color: #d1d1d6 !important;
+}
+
+body[data-section-theme="dark"] header .desktop-nav a:hover {
+  color: #ffffff !important;
+}
+
+body[data-section-theme="dark"] header .btn-outline {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(212, 175, 55, 0.45) !important;
+  color: #ffffff !important;
+}
+
+body[data-section-theme="dark"] header button[aria-label="Open cart"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+body[data-section-theme="dark"] header .mobile-menu-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+/* REVERSE-SCROLL ANIMATION STYLES (From scroll-driven-animations demo) */
+.reverse-scroll-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reverse-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: clamp(420px, 60vh, 560px);
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  cursor: grab;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+}
+
+.reverse-columns-grid:active {
+  cursor: grabbing;
+}
+
+.reverse-scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reverse-scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #855f10;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: grab;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.reverse-scrubber::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #a67c1e;
+}
+
+.reverse-scrubber::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.3);
+}
+
+.reverse-scrubber::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #855f10;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: grab;
+}
+
+/* ========================================================
+   HORIZONTAL REVERSE STREAMS (Horizontal reverse flow gallery)
+   ======================================================== */
+.horizontal-streams-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  cursor: grab;
+  padding: 0.5rem 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 3.5%, black 96.5%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 3.5%, black 96.5%, transparent);
+}
+
+.horizontal-streams-container:active {
+  cursor: grabbing;
+}
+
+.horizontal-stream-track {
+  display: flex;
+  flex-direction: row;
+  gap: 1.25rem;
+  width: max-content;
+  will-change: transform;
+}
+
+.horizontal-art-card {
+  flex-shrink: 0;
+  cursor: pointer;
+  background: transparent;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.horizontal-art-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  z-index: 10;
+}
+
+.horizontal-art-imgwrap {
+  width: clamp(170px, 15vw, 215px);
+  aspect-ratio: 4 / 5;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #f0eee8;
+}
+
+.horizontal-art-imgwrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.horizontal-art-card:hover .horizontal-art-imgwrap img {
+  transform: scale(1.08);
+}
+
+@media (max-width: 820px) {
+  .horizontal-art-imgwrap {
+    width: clamp(140px, 32vw, 175px);
+  }
+}
+
+@media (max-width: 820px) {
+  .reverse-columns-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    cursor: default;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+.reverse-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  will-change: transform;
+}
+
+/* Reverse scroll card styling matching the user's provided screenshot */
+.reverse-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  transition: transform 0.3s ease;
+}
+
+.reverse-card:hover {
+  transform: translateY(-4px);
+}
+
+.reverse-card-imgwrap {
+  width: 100%;
+  aspect-ratio: 4/5;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background-color: #f0eee8;
+}
+
+.reverse-card-imgwrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reverse-card:hover .reverse-card-imgwrap img {
+  transform: scale(1.06);
+}
+
+.reverse-card-caption {
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.reverse-card-caption .year {
+  color: var(--text-subtle);
+  font-weight: 400;
+}
+
+/* Native CSS Scroll-driven animations support */
+@supports (animation-timeline: scroll()) {
+  .reverse-column-reverse {
+    flex-direction: column-reverse;
+  }
+}
+
+/* ========================================================
+   OVERLAPPING CARD STACK SCROLL SYSTEM
+   ======================================================== */
+.site-main {
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+/* Home page with overlap container uses full 100vh edge-to-edge viewports */
+body:has(.overlap-container) .site-main {
+  padding-top: 0;
+}
+
+.overlap-container {
+  position: relative;
+  width: 100%;
+}
+
+.overlap-section {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 650px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+/* Ascending z-indexes ensure each section stacks cleanly on top of the previous one */
+.overlap-section:nth-child(1) {
+  z-index: 1;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.overlap-section:nth-child(2) {
+  z-index: 2;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.overlap-section:nth-child(3) {
+  z-index: 3;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.5);
+}
+
+.overlap-section:nth-child(4) {
+  z-index: 4;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.overlap-section:nth-child(5) {
+  z-index: 5;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.55);
+}
+
+.overlap-section:nth-child(6) {
+  z-index: 6;
+  border-radius: 0;
+  box-shadow: 0 -25px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* Site footer overlaps section 6 with clean edge-to-edge corners */
+footer.overlap-footer {
+  position: relative;
+  z-index: 10;
+  border-radius: 0;
+  box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.65);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 900px) {
+  .overlap-section {
+    position: relative;
+    top: 0;
+    height: auto;
+    min-height: calc(100vh - 80px);
+    padding: 3rem 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* ========================================================
+   SECTION 02: PALAIS DE TOKYO MUSEUM SALON ARCHITECTURE
+   ======================================================== */
+.museum-salon-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  gap: 3.5rem;
+  align-items: center;
+  width: 100%;
+}
+
+.museum-canvas-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.museum-canvas-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10.5;
+  max-height: 380px;
+  background: #141518;
+  border-radius: 4px;
+  box-shadow: 
+    0 25px 60px -10px rgba(18, 25, 40, 0.35),
+    0 0 0 1px rgba(0, 0, 0, 0.12),
+    inset 0 0 30px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+}
+
+.museum-canvas-frame:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 35px 80px -10px rgba(18, 25, 40, 0.45),
+    0 0 0 1px rgba(157, 114, 25, 0.35);
+}
+
+.museum-canvas-frame img {
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.museum-canvas-frame:hover img {
+  transform: scale(1.03);
+}
+
+.museum-spotlight {
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 50%;
+  background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.museum-reticle-trigger {
+  position: absolute;
+  top: 42%;
+  left: 65%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(18, 20, 24, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(230, 203, 120, 0.7);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  color: #f5f3ef;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+.museum-canvas-frame:hover .museum-reticle-trigger {
+  background: rgba(18, 20, 24, 0.96);
+  border-color: #e6cb78;
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.reticle-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #e6cb78;
+  box-shadow: 0 0 8px #e6cb78;
+  animation: reticlePulse 2s infinite;
+}
+
+@keyframes reticlePulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.museum-wall-placard {
+  margin-top: 0.9rem;
+  padding: 0.75rem 1.15rem;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 3px solid #855f10;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #2b2926;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.museum-spec-sheet {
+  margin: 1.15rem 0 1.35rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.35rem 0;
+}
+
+.monograph-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.45rem 0;
+  font-size: 0.82rem;
+}
+
+.monograph-spec-row:not(:last-child) {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+
+/* ========================================================
+   SECTION 03: VOLCANIC STRATA GEOLOGICAL DOSSIER
+   ======================================================== */
+.geological-dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 3.5rem;
+  align-items: center;
+  width: 100%;
+}
+
+.geological-archive-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.3rem 0.85rem;
+  background: rgba(230, 203, 120, 0.08);
+  border: 1px solid rgba(230, 203, 120, 0.28);
+  border-radius: 2px;
+  color: #e6cb78;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.strata-swatches-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin: 1.1rem 0 1.25rem 0;
+}
+
+.strata-swatch-card {
+  padding: 0.7rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.strata-swatch-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(230, 203, 120, 0.45);
+  transform: translateY(-2px);
+}
+
+.strata-swatch-indicator {
+  width: 18px;
+  height: 4px;
+  border-radius: 2px;
+  margin-bottom: 0.4rem;
+}
+
+.tectonic-artwork-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+}
+
+.tectonic-shadowbox {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 0 8px rgba(22, 23, 26, 0.95);
+  cursor: pointer;
+  background-color: #121315;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tectonic-shadowbox:hover {
+  transform: translateY(-3px) scale(1.01);
+}
+
+.tectonic-macro-badge {
+  position: absolute;
+  bottom: -15px;
+  left: -20px;
+  background: #18191c;
+  border: 1px solid rgba(230, 203, 120, 0.45);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+  max-width: 250px;
+  z-index: 5;
+  backdrop-filter: blur(8px);
+}
+
+
+/* ========================================================
+   SECTION 05: HAUTE EDITORIAL MANIFESTO & ATELIER JOURNAL
+   ======================================================== */
+.manifesto-editorial-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.manifesto-monumental-quote {
+  text-align: center;
+  max-width: 980px;
+  margin: 0 auto 1.5rem auto;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.manifesto-quote-text {
+  font-family: var(--font-serif);
+  font-size: clamp(1.65rem, 2.5vw, 2.3rem);
+  font-weight: 300;
+  line-height: 1.25;
+  color: #f7f6f2;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+.manifesto-split-layout {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 3.25rem;
+  align-items: center;
+}
+
+.atelier-monograph-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10.5;
+  max-height: 310px;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: #1a1b1f;
+}
+
+.atelier-location-stamp {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(12, 13, 16, 0.96), rgba(12, 13, 16, 0.75) 70%, transparent);
+  padding: 1.5rem 1.15rem 0.75rem 1.15rem;
+  color: #ffffff;
+}
+
+.heritage-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.15rem;
+  margin: 1.25rem 0 1.45rem 0;
+  padding-top: 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.heritage-pillar-item {
+  position: relative;
+}
+
+.heritage-pillar-num {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #e6cb78;
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.heritage-pillar-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+.heritage-pillar-sub {
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  line-height: 1.35;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .museum-salon-grid,
+  .geological-dossier-grid,
+  .manifesto-split-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .tectonic-artwork-wrap {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .tectonic-macro-badge {
+    position: static;
+    margin-top: 1rem;
+    max-width: 100%;
+  }
+  
+  .strata-swatches-grid,
+  .heritage-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .museum-wall-placard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+
+
