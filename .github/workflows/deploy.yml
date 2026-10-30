@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Build & Deploy to VPS
+name: Build and Deploy to CapRover
 
 on:
   push:
@@ -7,107 +7,70 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: production-deploy
-  cancel-in-progress: true
+  group: production-deployment
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  # ========================================================
-  # STAGE 1: CI (Continuous Integration - Validate & Build)
-  # ========================================================
-  validate-and-build:
-    name: Build & Verify Application
+  deploy:
+    name: Build, Publish, and Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
+      - name: Validate Required Secrets
+        run: |
+          MISSING=""
+          if [ -z "${{ secrets.CAPROVER_SERVER }}" ]; then MISSING="$MISSING CAPROVER_SERVER"; fi
+          if [ -z "${{ secrets.CAPROVER_APP }}" ]; then MISSING="$MISSING CAPROVER_APP"; fi
+          if [ -z "${{ secrets.CAPROVER_APP_TOKEN }}" ]; then MISSING="$MISSING CAPROVER_APP_TOKEN"; fi
+          if [ -n "$MISSING" ]; then
+            echo "::error::Missing required repository secret(s):$MISSING"
+            echo "Ensure CAPROVER_SERVER, CAPROVER_APP, and CAPROVER_APP_TOKEN are set in GitHub Secrets."
+            exit 1
+          fi
+
+      - name: Prepare Image Metadata
+        id: meta
+        run: |
+          # GHCR requires image names to be lowercase
+          LOWER_REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_URI="ghcr.io/${LOWER_REPO}"
+          echo "image_uri=${IMAGE_URI}" >> "$GITHUB_OUTPUT"
+          echo "image_tag_sha=${IMAGE_URI}:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "image_tag_latest=${IMAGE_URI}:latest" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
         with:
-          node-version: 20
-          cache: 'npm'
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Next.js Production Build
-        run: npm run build
-        env:
-          NEXT_TELEMETRY_DISABLED: 1
-
-  # ========================================================
-  # STAGE 2: CD (Continuous Deployment - Deploy to VPS via SSH)
-  # ========================================================
-  deploy-to-vps:
-    name: Deploy to Server via SSH
-    needs: validate-and-build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Connect and Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE || '' }}
-          envs: GITHUB_TOKEN,GITHUB_REPOSITORY
-          script_stop: true
-          script: |
-            echo "=================================================="
-            echo "🚀 Starting Automated Deployment for $GITHUB_REPOSITORY"
-            echo "=================================================="
-            
-            APP_DIR="${{ secrets.SERVER_APP_DIR }}"
-            if [ -z "$APP_DIR" ]; then
-              APP_DIR="/var/www/artiset-website"
-            fi
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image_tag_sha }}
+            ${{ steps.meta.outputs.image_tag_latest }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-            echo "📁 Target directory: $APP_DIR"
-            mkdir -p "$APP_DIR"
-            cd "$APP_DIR"
-
-            # Authenticate Git with GITHUB_TOKEN for private or public repos
-            REPO_AUTH_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-
-            if [ ! -d ".git" ]; then
-              echo "📦 Cloning repository..."
-              git clone "$REPO_AUTH_URL" .
-            else
-              echo "🔄 Updating existing repository..."
-              git remote set-url origin "$REPO_AUTH_URL"
-              git fetch origin main
-              git reset --hard origin/main
-            fi
-
-            echo "📦 Installing dependencies..."
-            npm ci --legacy-peer-deps || npm install
-
-            echo "🏗️ Building Next.js application..."
-            npm run build
-
-            echo "♻️ Reloading PM2 process..."
-            if command -v pm2 > /dev/null 2>&1; then
-              if [ -f "ecosystem.config.js" ]; then
-                pm2 startOrReload ecosystem.config.js --update-env
-              else
-                pm2 reload artiset-website || pm2 start npm --name "artiset-website" -- start
-              fi
-              pm2 save
-            else
-              echo "⚠️ PM2 not detected. Installing globally..."
-              sudo npm install -g pm2 || npm install -g pm2
-              pm2 start ecosystem.config.js
-              pm2 save
-            fi
-
-            echo "=================================================="
-            echo "✅ Deployment completed successfully!"
-            echo "=================================================="
+      - name: Deploy Image to CapRover
+        uses: caprover/deploy-from-github@v1.1.2
+        with:
+          server: ${{ secrets.CAPROVER_SERVER }}
+          app: ${{ secrets.CAPROVER_APP }}
+          token: ${{ secrets.CAPROVER_APP_TOKEN }}
+          image: ${{ steps.meta.outputs.image_tag_sha }}

@@ -131,7 +131,7 @@ export default function Home() {
     // Cooldown duration matches smooth scroll easing curve (800ms)
     setTimeout(() => {
       isTransitioningRef.current = false;
-    }, 800);
+    }, 1000);
   };
 
   // Check URL hash on initial load (e.g. #one, #two, #three...)
