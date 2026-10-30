@@ -155,12 +155,24 @@ export default function Home() {
     const target = Math.max(0, Math.min(maxIndex, index));
     isTransitioningRef.current = true;
 
-    // Slower, dignified pace: 1150ms glide
-    const SCROLL_DURATION = 1150;
+    const isMobile = window.innerWidth <= 900;
+    // Slower, dignified pace: 1150ms on desktop, 650ms on mobile
+    const SCROLL_DURATION = isMobile ? 650 : 1150;
 
     if (target < SECTIONS.length) {
-      const targetY = target * window.innerHeight;
-      smoothScrollTo(targetY, SCROLL_DURATION);
+      if (isMobile) {
+        const targetEl = document.getElementById(SECTIONS[target].id);
+        if (targetEl) {
+          const rect = targetEl.getBoundingClientRect();
+          const targetY = rect.top + window.scrollY - 65; // offset for fixed mobile header
+          smoothScrollTo(targetY, SCROLL_DURATION);
+        } else {
+          smoothScrollTo(target * window.innerHeight, SCROLL_DURATION);
+        }
+      } else {
+        const targetY = target * window.innerHeight;
+        smoothScrollTo(targetY, SCROLL_DURATION);
+      }
       setActiveSection(target);
       setIsAtBottom(false);
       window.history.replaceState(null, '', `#${SECTIONS[target].anchor}`);
@@ -170,7 +182,7 @@ export default function Home() {
       setIsAtBottom(true);
     }
 
-    // Cooldown duration matches smooth scroll easing curve (1200ms)
+    // Cooldown duration matches smooth scroll easing curve
     setTimeout(() => {
       isTransitioningRef.current = false;
     }, SCROLL_DURATION + 50);
@@ -191,21 +203,39 @@ export default function Home() {
     }
   }, []);
 
-  // Track active section on window scroll (sync fallback when user drags scrollbar)
+  // Track active section on window scroll (sync fallback when user drags scrollbar or scrolls on mobile)
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY;
-      const sectionHeight = window.innerHeight;
       const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 180;
       setIsAtBottom(atBottom);
 
-      if (!isTransitioningRef.current && !atBottom) {
-        const index = Math.min(
-          SECTIONS.length - 1,
-          Math.max(0, Math.round(scrollPos / sectionHeight))
-        );
-        if (index !== activeSectionRef.current) {
-          setActiveSection(index);
+      if (window.innerWidth <= 900) {
+        // Mobile: Detect active section based on real DOM position
+        let currentIdx = 0;
+        for (let i = 0; i < SECTIONS.length; i++) {
+          const el = document.getElementById(SECTIONS[i].id);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.45 && rect.bottom >= window.innerHeight * 0.15) {
+              currentIdx = i;
+            }
+          }
+        }
+        if (currentIdx !== activeSectionRef.current) {
+          setActiveSection(currentIdx);
+        }
+      } else {
+        // Desktop: 100vh calculations
+        const sectionHeight = window.innerHeight;
+        if (!isTransitioningRef.current && !atBottom) {
+          const index = Math.min(
+            SECTIONS.length - 1,
+            Math.max(0, Math.round(scrollPos / sectionHeight))
+          );
+          if (index !== activeSectionRef.current) {
+            setActiveSection(index);
+          }
         }
       }
     };
@@ -214,9 +244,12 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Single Scroll Wheel Controller: 1 Scroll Tick = 1 Full Section Transition
+  // Single Scroll Wheel Controller: 1 Scroll Tick = 1 Full Section Transition (Desktop only)
   useEffect(() => {
     const handleGlobalWheel = (e: WheelEvent) => {
+      // Allow natural scrolling on touch devices or smaller viewports
+      if (typeof window !== 'undefined' && window.innerWidth <= 900) return;
+
       // If modal or lightbox is open, allow normal scrolling inside modal
       if (selectedArtwork || selectedGalleryItem) return;
 
@@ -253,15 +286,17 @@ export default function Home() {
     return () => window.removeEventListener('wheel', handleGlobalWheel);
   }, [selectedArtwork, selectedGalleryItem, isAtBottom]);
 
-  // Touch Gesture Controller (Mobile & Tablet: 1 Swipe = 1 Full Section Transition)
+  // Touch Gesture Controller (Desktop trackpad / large screens only; mobile uses natural native touch scroll)
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
+      if (typeof window !== 'undefined' && window.innerWidth <= 900) return;
       if (selectedArtwork || selectedGalleryItem) return;
       touchStartY.current = e.touches[0].clientY;
       touchStartX.current = e.touches[0].clientX;
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
+      if (typeof window !== 'undefined' && window.innerWidth <= 900) return;
       if (selectedArtwork || selectedGalleryItem) return;
       if (isTransitioningRef.current) return;
 
@@ -476,6 +511,7 @@ export default function Home() {
 
       {/* Floating Bottom Section Counter Badge */}
       <div
+        className="bottom-counter-badge desktop-only"
         style={{
           position: 'fixed',
           bottom: '2rem',
@@ -530,15 +566,15 @@ export default function Home() {
             color: '#ffffff',
           }}
         >
-          <div className="site-container" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '5rem' }}>
+          <div className="site-container section-content-wrap hero-site-container" style={{ width: '100%' }}>
             
             {/* Top atelier badge */}
-            <div className="reveal-content reveal-delay-1" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', paddingBottom: '0.75rem' }}>
+            <div className="reveal-content reveal-delay-1 hero-top-badge-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', paddingBottom: '0.75rem' }}>
               <span className="art-badge" style={{ background: 'rgba(212, 175, 55, 0.14)', borderColor: 'rgba(212, 175, 55, 0.45)', color: '#f3e5ab' }}>
                 <Sparkles size={12} />
                 <span>SOLO RETROSPECTIVE 2026–2027 • PALAIS DE TOKYO, PARIS</span>
               </span>
-              <span style={{ fontSize: '0.78rem', color: '#e6cb78', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 600 }}>
+              <span className="hero-top-badge-sub" style={{ fontSize: '0.78rem', color: '#e6cb78', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 600 }}>
                 Contemporary Fine Art Atelier
               </span>
             </div>
@@ -558,7 +594,7 @@ export default function Home() {
               <h1
                 className="font-serif reveal-content reveal-delay-2"
                 style={{
-                  fontSize: 'clamp(2.6rem, 5.2vw, 4.8rem)',
+                  fontSize: 'clamp(2.3rem, 5.2vw, 4.8rem)',
                   lineHeight: 1.08,
                   fontWeight: 300,
                   letterSpacing: '-0.02em',
@@ -573,7 +609,7 @@ export default function Home() {
               <p
                 className="reveal-content reveal-delay-3"
                 style={{
-                  fontSize: 'clamp(0.95rem, 1.4vw, 1.15rem)',
+                  fontSize: 'clamp(0.92rem, 1.4vw, 1.15rem)',
                   lineHeight: 1.65,
                   color: '#e4e4e7',
                   maxWidth: '720px',
@@ -586,7 +622,7 @@ export default function Home() {
 
               {/* Centered Call-To-Action Buttons */}
               <div
-                className="reveal-content reveal-delay-4"
+                className="reveal-content reveal-delay-4 hero-cta-group"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -661,7 +697,7 @@ export default function Home() {
           id="two"
           style={{ backgroundColor: '#ccd2d9', color: '#1a1918' }}
         >
-          <div className="site-container" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="site-container section-content-wrap">
             <div className="museum-salon-grid">
               {/* Left: Monumental Stretched Canvas & Authentic Museum Placard */}
               <div className="museum-canvas-wrap reveal-content reveal-delay-1">
@@ -815,7 +851,7 @@ export default function Home() {
                 </div>
 
                 {/* Actions */}
-                <div className="reveal-content reveal-delay-4" style={{ display: 'flex', gap: '0.9rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <div className="reveal-content reveal-delay-4 section-actions-row">
                   <button
                     onClick={() => setSelectedArtwork(ARTWORKS_DATA[0])}
                     className="btn-gold"
@@ -859,7 +895,7 @@ export default function Home() {
           id="three"
           style={{ backgroundColor: '#26272b', color: '#f0f0f2' }}
         >
-          <div className="site-container" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="site-container section-content-wrap">
             <div className="geological-dossier-grid">
               {/* Left: Geological Research Dossier & Mineral Stratum Swatches */}
               <div>
@@ -952,7 +988,7 @@ export default function Home() {
                 </div>
 
                 {/* Actions */}
-                <div className="reveal-content reveal-delay-4" style={{ display: 'flex', gap: '0.9rem', flexWrap: 'wrap' }}>
+                <div className="reveal-content reveal-delay-4 section-actions-row">
                   <button
                     onClick={() => setSelectedArtwork(ARTWORKS_DATA[1])}
                     className="btn-gold"
@@ -1073,7 +1109,7 @@ export default function Home() {
           }}
           ref={galleryRef}
         >
-          <div className="site-container" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div className="site-container section-content-wrap">
             
             {/* Header with Link to Dedicated Filterable Gallery */}
             <div
@@ -1120,7 +1156,7 @@ export default function Home() {
 
             {/* Interactive Scrubber & Status Header */}
             <div
-              className="reveal-content reveal-delay-2"
+              className="reveal-content reveal-delay-2 reverse-controls-bar"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -1134,7 +1170,7 @@ export default function Home() {
                 flexShrink: 0,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: '180px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: '160px' }}>
                 <SlidersHorizontal size={14} style={{ color: '#855f10' }} />
                 <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#1a1918' }}>
                   Horizontal Flow: {Math.round(galleryProgress * 100)}%
@@ -1161,6 +1197,7 @@ export default function Home() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                 <button
                   type="button"
+                  className="desktop-only"
                   onClick={() => setSpeedMultiplier((prev) => (prev === 1 ? 1.5 : prev === 1.5 ? 0.6 : 1))}
                   style={{
                     padding: '0.35rem 0.65rem',
@@ -1202,6 +1239,7 @@ export default function Home() {
 
                 <button
                   type="button"
+                  className="desktop-only"
                   onClick={() => setGalleryProgress((p) => Math.max(0, p - 0.12))}
                   style={{
                     padding: '0.35rem 0.6rem',
@@ -1220,6 +1258,7 @@ export default function Home() {
 
                 <button
                   type="button"
+                  className="desktop-only"
                   onClick={() => setGalleryProgress((p) => Math.min(1, p + 0.12))}
                   style={{
                     padding: '0.35rem 0.6rem',
@@ -1238,6 +1277,7 @@ export default function Home() {
 
                 <button
                   type="button"
+                  className="desktop-only"
                   onClick={() => setGalleryProgress(0)}
                   style={{
                     padding: '0.35rem 0.6rem',
@@ -1267,7 +1307,7 @@ export default function Home() {
               onPointerUp={handlePointerUp}
               onPointerCancel={handlePointerUp}
               style={{
-                touchAction: 'none',
+                touchAction: 'pan-y',
               }}
             >
               {/* Track 1 (Row 1): Glides to the LEFT */}
@@ -1445,7 +1485,7 @@ export default function Home() {
           id="five"
           style={{ backgroundColor: '#131418', color: '#ffffff' }}
         >
-          <div className="site-container" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="site-container section-content-wrap">
             <div className="manifesto-editorial-container">
               {/* Monumental Centered Typographic Manifesto Statement */}
               <div className="manifesto-monumental-quote reveal-content reveal-delay-1">
@@ -1518,7 +1558,7 @@ export default function Home() {
                   </div>
 
                   {/* Actions */}
-                  <div className="reveal-content reveal-delay-4" style={{ display: 'flex', gap: '0.9rem', flexWrap: 'wrap' }}>
+                  <div className="reveal-content reveal-delay-4 section-actions-row">
                     <Link href="/about" className="btn-gold" style={{ padding: '0.75rem 1.6rem' }}>
                       <span>Read Biography & CV</span>
                       <ArrowRight size={14} />
@@ -1552,15 +1592,8 @@ export default function Home() {
           id="six"
           style={{ backgroundColor: '#eae8e3', color: '#1a1918' }}
         >
-          <div className="site-container" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '3.5rem',
-                alignItems: 'center',
-              }}
-            >
+          <div className="site-container section-content-wrap">
+            <div className="archive-hub-grid">
               {/* Press Highlights & Natural-Scroll Archives Directory */}
               <div>
                 <span className="font-display reveal-content reveal-delay-1" style={{ fontSize: '0.78rem', letterSpacing: '0.2em', color: '#855f10', fontWeight: 700 }}>
@@ -1685,7 +1718,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="reveal-content reveal-delay-4" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div className="reveal-content reveal-delay-4 section-actions-row">
                   <button onClick={() => scrollToSection(0)} className="btn-outline" style={{ background: '#ffffff', borderColor: 'rgba(0, 0, 0, 0.2)', color: '#1a1918', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
                     <span>▲ Back to Top (#one)</span>
                   </button>
@@ -1693,16 +1726,7 @@ export default function Home() {
               </div>
 
               {/* Direct Inquiry Contact Card */}
-              <div
-                className="glass-panel reveal-content reveal-delay-2"
-                style={{
-                  padding: '2rem 2.25rem',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(0, 0, 0, 0.12)',
-                  backgroundColor: '#ffffff',
-                  boxShadow: '0 20px 50px rgba(0, 0, 0, 0.1)',
-                }}
-              >
+              <div className="glass-panel contact-card-glass reveal-content reveal-delay-2">
                 <span className="art-badge" style={{ marginBottom: '0.75rem', background: 'rgba(133, 95, 16, 0.12)', borderColor: 'rgba(133, 95, 16, 0.35)', color: '#855f10' }}>
                   DIRECT INQUIRY DOSSIER
                 </span>

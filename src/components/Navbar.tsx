@@ -42,25 +42,11 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Primary Header: Absolute on Home Page (goes up with Section 1), Fixed on Other Pages */}
+      {/* Primary Header: Desktop uses absolute on Home hero; Mobile is ALWAYS fixed with frosted glass for 100% navigation accessibility */}
       <header
+        className={`main-header ${isScrolled ? 'is-scrolled' : ''} ${isHome ? 'is-home' : ''}`}
         style={{
-          position: isHome ? 'absolute' : 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: isHome ? 30 : 900,
           transition: 'all 0.3s ease',
-          backgroundColor: isHome
-            ? 'transparent'
-            : (isScrolled ? 'rgba(255, 255, 255, 0.94)' : 'rgba(252, 251, 250, 0.85)'),
-          backdropFilter: isHome ? 'none' : 'blur(16px)',
-          WebkitBackdropFilter: isHome ? 'none' : 'blur(16px)',
-          borderBottom: isHome
-            ? '1px solid rgba(255, 255, 255, 0.12)'
-            : (isScrolled ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(0, 0, 0, 0.04)'),
-          padding: isHome ? '1.25rem 0' : (isScrolled ? '0.85rem 0' : '1.25rem 0'),
-          boxShadow: isHome ? 'none' : (isScrolled ? '0 4px 20px rgba(0, 0, 0, 0.03)' : 'none'),
         }}
       >
         <div className="site-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -69,10 +55,10 @@ export default function Navbar() {
             <span
               className="font-display"
               style={{
-                fontSize: '1.25rem',
+                fontSize: 'clamp(1rem, 4vw, 1.25rem)',
                 fontWeight: 700,
                 letterSpacing: '0.14em',
-                color: isHome ? '#ffffff' : 'var(--text-main)',
+                color: isHome ? '#ffffff' : (isScrolled ? 'var(--text-main)' : '#ffffff'),
                 lineHeight: 1.1,
               }}
             >
@@ -80,9 +66,9 @@ export default function Navbar() {
             </span>
             <span
               style={{
-                fontSize: '0.65rem',
+                fontSize: '0.62rem',
                 letterSpacing: '0.22em',
-                color: isHome ? '#e6cb78' : 'var(--accent-gold)',
+                color: '#e6cb78',
                 textTransform: 'uppercase',
                 marginTop: '0.15rem',
                 fontFamily: 'var(--font-sans)',
@@ -146,8 +132,8 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right Header Controls (Cart & Acquire CTA) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          {/* Right Header Controls (Cart & Mobile Menu Trigger) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <Link
               href="/gallery"
               className="btn-outline desktop-only"
@@ -173,33 +159,25 @@ export default function Navbar() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '40px',
-                height: '40px',
+                width: '38px',
+                height: '38px',
                 borderRadius: '50%',
-                background: isHome ? 'rgba(255, 255, 255, 0.1)' : '#ffffff',
-                border: isHome ? '1px solid rgba(255, 255, 255, 0.25)' : '1px solid var(--border-light)',
-                color: isHome ? '#ffffff' : 'var(--text-main)',
+                background: 'rgba(255, 255, 255, 0.12)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                color: '#ffffff',
                 transition: 'all 0.25s ease',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--accent-gold)';
-                e.currentTarget.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = isHome ? 'rgba(255, 255, 255, 0.25)' : 'var(--border-light)';
-                e.currentTarget.style.transform = 'scale(1)';
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
               }}
             >
-              <ShoppingBag size={17} />
+              <ShoppingBag size={16} />
               {totalItems > 0 && (
                 <span
                   style={{
                     position: 'absolute',
                     top: '-3px',
                     right: '-3px',
-                    backgroundColor: 'var(--accent-gold)',
-                    color: '#ffffff',
+                    backgroundColor: '#d4af37',
+                    color: '#121215',
                     fontSize: '0.65rem',
                     fontWeight: 700,
                     width: '18px',
@@ -208,7 +186,7 @@ export default function Navbar() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
                   }}
                 >
                   {totalItems}
@@ -225,12 +203,13 @@ export default function Navbar() {
                 display: 'none',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                borderRadius: '6px',
-                background: isHome ? 'rgba(255, 255, 255, 0.1)' : '#ffffff',
-                border: isHome ? '1px solid rgba(255, 255, 255, 0.25)' : '1px solid var(--border-light)',
-                color: isHome ? '#ffffff' : 'var(--text-main)',
+                width: '38px',
+                height: '38px',
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.12)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                color: '#ffffff',
+                cursor: 'pointer',
               }}
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -408,7 +387,28 @@ export default function Navbar() {
       )}
 
       <style jsx global>{`
+        .main-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 990;
+          padding: 1rem 0;
+          background: rgba(14, 15, 18, 0.92);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
         @media (min-width: 1024px) {
+          .main-header.is-home:not(.is-scrolled) {
+            position: absolute;
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+          }
+          .main-header:not(.is-home) {
+            background: rgba(255, 255, 255, 0.94);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+          }
           .desktop-nav {
             display: flex !important;
           }
@@ -420,6 +420,12 @@ export default function Navbar() {
           }
         }
         @media (max-width: 1023px) {
+          .main-header {
+            position: fixed !important;
+            padding: 0.75rem 0 !important;
+            background: rgba(12, 13, 16, 0.95) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+          }
           .desktop-nav {
             display: none !important;
           }

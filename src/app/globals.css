@@ -482,20 +482,6 @@ body[data-section-theme="light"] .snap-nav-dot {
   }
 }
 
-/* Responsive Mobile Layout: Prevent Clipping */
-@media (max-width: 820px) {
-  .snap-progress-rail {
-    display: none;
-  }
-  .overlap-section {
-    position: relative !important;
-    top: 0 !important;
-    min-height: auto !important;
-    height: auto !important;
-    padding: 3rem 0;
-  }
-}
-
 /* Dynamic Header Adaptive Theme */
 body[data-section-theme="dark"] header {
   background-color: rgba(10, 10, 14, 0.9) !important;
@@ -1193,35 +1179,305 @@ footer.overlap-footer {
   display: block;
 }
 
+/* Container & Section Helper Classes */
+.section-content-wrap {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-site-container {
+  padding-top: 5rem;
+}
+
+.hero-top-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 0.75rem;
+}
+
+.hero-cta-group,
+.section-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.archive-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.contact-card-glass {
+  padding: 2rem 2.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================================
+   MASTER MOBILE & TABLET RESPONSIVE SUITE (<= 900px)
+   ======================================================== */
 @media (max-width: 900px) {
-  .museum-salon-grid,
-  .geological-dossier-grid,
-  .manifesto-split-layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  /* Prevent Any Horizontal Bleed or Shaking */
+  html,
+  body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
   }
-  
-  .tectonic-artwork-wrap {
-    max-width: 100%;
-    margin: 0 auto;
+
+  /* Unhide all content on mobile so natural thumb scrolling shows every element */
+  .reveal-content {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
-  
-  .tectonic-macro-badge {
-    position: static;
-    margin-top: 1rem;
-    max-width: 100%;
+
+  /* Hide Desktop Floats & Sticky Rails that obstruct touch targets */
+  .snap-progress-rail,
+  .bottom-counter-badge,
+  .desktop-only {
+    display: none !important;
   }
-  
-  .strata-swatches-grid,
-  .heritage-pillars-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+
+  /* Section flow: natural relative vertical stack with healthy padding */
+  .overlap-section {
+    position: relative !important;
+    top: auto !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 3.75rem 0 3rem 0 !important;
+    overflow: visible !important;
   }
-  
+
+  .overlap-section#one {
+    padding-top: 5.5rem !important;
+  }
+
+  .section-content-wrap {
+    min-height: auto !important;
+    height: auto !important;
+    padding-top: 0 !important;
+  }
+
+  .site-container {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  /* Hero Section Mobile Polish */
+  .hero-top-badge-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .hero-top-badge-sub {
+    font-size: 0.7rem !important;
+  }
+
+  .hero-cta-group,
+  .section-actions-row {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 0.75rem !important;
+  }
+
+  .hero-cta-group > *,
+  .section-actions-row > * {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    min-height: 46px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Section 02: Salon Wall & Placard */
+  .museum-salon-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+  }
+
+  .museum-canvas-frame {
+    aspect-ratio: 16 / 11 !important;
+  }
+
   .museum-wall-placard {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.65rem !important;
+    padding: 0.85rem 1rem !important;
+  }
+
+  /* Section 03: Geological Strata */
+  .geological-dossier-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .geological-archive-stamp {
+    font-size: 0.65rem !important;
+    padding: 0.35rem 0.65rem !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+  }
+
+  .strata-swatches-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+    margin: 0.85rem 0 1rem 0 !important;
+  }
+
+  .strata-swatch-card {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    padding: 0.65rem 0.85rem !important;
+  }
+
+  .strata-swatch-indicator {
+    width: 5px !important;
+    height: 32px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+    border-radius: 3px !important;
+  }
+
+  .tectonic-artwork-wrap {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .tectonic-shadowbox {
+    max-width: 380px !important;
+    margin: 0 auto !important;
+  }
+
+  .tectonic-macro-badge {
+    position: relative !important;
+    left: 0 !important;
+    bottom: auto !important;
+    margin-top: 0.85rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Section 04: Reverse Gallery Stream Controls */
+  .reverse-controls-bar {
+    gap: 0.65rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .horizontal-streams-container {
+    touch-action: pan-y !important;
+  }
+
+  .horizontal-art-card,
+  .horizontal-art-imgwrap {
+    width: 160px !important;
+    height: 105px !important;
+  }
+
+  /* Section 05: Editorial Manifesto & Atelier */
+  .manifesto-monumental-quote {
+    padding: 0 !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .manifesto-quote-text {
+    font-size: clamp(1.35rem, 5.5vw, 1.85rem) !important;
+    line-height: 1.35 !important;
+  }
+
+  .manifesto-split-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+  }
+
+  .atelier-monograph-card {
+    max-height: 240px !important;
+  }
+
+  .atelier-location-stamp {
+    padding: 1rem 0.85rem 0.65rem 0.85rem !important;
+  }
+
+  .heritage-pillars-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+    margin: 1rem 0 !important;
+    padding-top: 0.85rem !important;
+  }
+
+  .heritage-pillar-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    padding: 0.65rem 0.85rem !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 4px !important;
+  }
+
+  .heritage-pillar-num {
+    font-size: 1.45rem !important;
+    margin-bottom: 0 !important;
+    min-width: 44px !important;
+  }
+
+  /* Section 06: Liaison Hub & Inquiry */
+  .archive-hub-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .contact-card-glass {
+    padding: 1.4rem 1.15rem !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* Extra Polish for Small Phones (<= 480px) */
+@media (max-width: 480px) {
+  .site-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  h1.font-serif {
+    font-size: 2.1rem !important;
+  }
+
+  h2.font-serif {
+    font-size: 1.75rem !important;
+  }
+
+  .museum-spec-sheet {
+    padding: 0.75rem 0.85rem !important;
+  }
+
+  .monograph-spec-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.2rem !important;
+  }
+
+  .contact-card-glass {
+    padding: 1.25rem 0.95rem !important;
   }
 }
 
