@@ -481,8 +481,8 @@ export default function Home() {
         className="snap-progress-rail"
         aria-label="Section navigation rail"
         style={{
-          opacity: isAtBottom ? 0 : 1,
-          pointerEvents: isAtBottom ? 'none' : 'auto',
+          opacity: isAtBottom || activeSection === 5 ? 0 : 1,
+          pointerEvents: isAtBottom || activeSection === 5 ? 'none' : 'auto',
           transition: 'opacity 0.35s ease',
         }}
       >
@@ -537,8 +537,8 @@ export default function Home() {
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           color: SECTIONS[activeSection].theme === 'dark' ? '#d1d1d6' : 'var(--text-muted)',
-          opacity: isAtBottom ? 0 : 1,
-          pointerEvents: isAtBottom ? 'none' : 'auto',
+          opacity: isAtBottom || activeSection === 5 ? 0 : 1,
+          pointerEvents: isAtBottom || activeSection === 5 ? 'none' : 'auto',
           transition: 'all 0.35s ease',
         }}
       >
@@ -563,7 +563,7 @@ export default function Home() {
           id="one"
           style={{
             position: 'sticky',
-            backgroundImage: `linear-gradient(135deg, rgba(8, 8, 11, 0.82) 0%, rgba(12, 12, 16, 0.72) 50%, rgba(6, 6, 9, 0.88) 100%), url('/images/pencil_art_hero.jpg')`,
+            backgroundImage: `linear-gradient(180deg, rgba(10, 10, 14, 0.75) 0%, rgba(12, 12, 16, 0.58) 45%, rgba(8, 8, 12, 0.8) 100%), url('/images/architectural_hero.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat',
@@ -905,9 +905,24 @@ export default function Home() {
         <section
           className={`overlap-section ${activeSection === 2 ? 'is-active' : ''}`}
           id="three"
-          style={{ backgroundColor: '#26272b', color: '#f0f0f2' }}
+          style={{ backgroundColor: '#14151a', color: '#f0f0f2', position: 'relative' }}
         >
-          <div className="site-container section-content-wrap">
+          {/* Subtle Painting Background Video */}
+          <div className="section-video-bg-container">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/images/painting_video_poster.jpg"
+              className="section-video-bg"
+            >
+              <source src="/videos/painting_bg.mp4" type="video/mp4" />
+            </video>
+            <div className="section-video-overlay" />
+          </div>
+
+          <div className="site-container section-content-wrap" style={{ position: 'relative', zIndex: 2 }}>
             <div className="geological-dossier-grid">
               {/* Left: Geological Research Dossier & Mineral Stratum Swatches */}
               <div>
@@ -1420,7 +1435,14 @@ export default function Home() {
         <section
           className={`overlap-section ${activeSection === 4 ? 'is-active' : ''}`}
           id="five"
-          style={{ backgroundColor: '#131418', color: '#ffffff' }}
+          style={{
+            backgroundImage: `linear-gradient(135deg, rgba(12, 13, 16, 0.78) 0%, rgba(16, 17, 21, 0.65) 50%, rgba(10, 11, 14, 0.82) 100%), url('/images/section5_atelier_bg.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: '#101114',
+            color: '#ffffff',
+          }}
         >
           <div className="site-container section-content-wrap">
             <div className="manifesto-editorial-container">
@@ -1527,7 +1549,14 @@ export default function Home() {
         <section
           className={`overlap-section ${activeSection === 5 ? 'is-active' : ''}`}
           id="six"
-          style={{ backgroundColor: '#eae8e3', color: '#1a1918' }}
+          style={{
+            backgroundImage: `url('/images/section6_brushes_bg.jpg')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'right bottom',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: '#f5f5f5',
+            color: '#1a1918',
+          }}
         >
           <div className="site-container section-content-wrap">
             <div className="archive-hub-grid">
