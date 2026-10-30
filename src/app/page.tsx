@@ -67,11 +67,21 @@ export default function Home() {
   const activeSectionRef = useRef(0);
   const touchStartY = useRef(0);
   const touchStartX = useRef(0);
+  const scrollRafRef = useRef<number | null>(null);
 
   // Synchronize ref with activeSection state
   useEffect(() => {
     activeSectionRef.current = activeSection;
   }, [activeSection]);
+
+  // Clean up any in-flight scroll animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollRafRef.current) {
+        cancelAnimationFrame(scrollRafRef.current);
+      }
+    };
+  }, []);
 
   // Reverse Scroll 3 horizontal stream items populated from 40 gallery images
   const row1Items = GALLERY_IMAGES_DATA.filter((_, i) => i % 3 === 0);
@@ -102,7 +112,42 @@ export default function Home() {
     };
   }, [row1Items.length, row2Items.length, row3Items.length]);
 
-  // Smoothly glide directly to a specific section by index (with animation lock)
+  // Custom Graceful Ease-InOut Smooth Scroll with adjustable slower speed (1150ms)
+  const smoothScrollTo = (targetY: number, duration = 1150) => {
+    if (typeof window === 'undefined') return;
+
+    if (scrollRafRef.current) {
+      cancelAnimationFrame(scrollRafRef.current);
+    }
+
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 2) return;
+
+    const startTime = performance.now();
+
+    // Slower, graceful cubic ease-in-out curve
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = easeInOutCubic(progress);
+
+      window.scrollTo(0, startY + distance * ease);
+
+      if (progress < 1) {
+        scrollRafRef.current = requestAnimationFrame(step);
+      } else {
+        scrollRafRef.current = null;
+      }
+    };
+
+    scrollRafRef.current = requestAnimationFrame(step);
+  };
+
+  // Smoothly glide directly to a specific section by index (with slower graceful pace)
   const scrollToSection = (index: number) => {
     if (typeof window === 'undefined') return;
 
@@ -110,28 +155,25 @@ export default function Home() {
     const target = Math.max(0, Math.min(maxIndex, index));
     isTransitioningRef.current = true;
 
+    // Slower, dignified pace: 1150ms glide
+    const SCROLL_DURATION = 1150;
+
     if (target < SECTIONS.length) {
       const targetY = target * window.innerHeight;
-      window.scrollTo({
-        top: targetY,
-        behavior: 'smooth',
-      });
+      smoothScrollTo(targetY, SCROLL_DURATION);
       setActiveSection(target);
       setIsAtBottom(false);
       window.history.replaceState(null, '', `#${SECTIONS[target].anchor}`);
     } else {
       // Transition to Footer
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
+      smoothScrollTo(document.documentElement.scrollHeight, SCROLL_DURATION);
       setIsAtBottom(true);
     }
 
-    // Cooldown duration matches smooth scroll easing curve (800ms)
+    // Cooldown duration matches smooth scroll easing curve (1200ms)
     setTimeout(() => {
       isTransitioningRef.current = false;
-    }, 1000);
+    }, SCROLL_DURATION + 50);
   };
 
   // Check URL hash on initial load (e.g. #one, #two, #three...)

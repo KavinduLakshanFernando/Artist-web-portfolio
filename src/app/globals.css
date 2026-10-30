@@ -43,6 +43,10 @@ html {
   overflow-x: clip;
 }
 
+html:has(.overlap-container) {
+  scroll-behavior: auto;
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-main);
