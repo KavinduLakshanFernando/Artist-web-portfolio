@@ -36,7 +36,7 @@ import { useCart } from '../context/CartContext';
 
 const SECTIONS = [
   { id: 'one', title: '01 // Atelier Hero', anchor: 'one', label: 'Hero', theme: 'dark', color: '#0a0a0d' },
-  { id: 'two', title: '02 // Masterwork Luminescence', anchor: 'two', label: 'Luminescence', theme: 'light', color: '#ccd2d9' },
+  { id: 'two', title: '02 // Masterwork Luminescence', anchor: 'two', label: 'Luminescence', theme: 'light', color: '#f8f7f4' },
   { id: 'three', title: '03 // Masterwork Earth & Ash', anchor: 'three', label: 'Earth & Ash', theme: 'dark', color: '#363738' },
   { id: 'four', title: '04 // Reverse Scroll Gallery', anchor: 'four', label: 'Gallery', theme: 'light', color: '#f8f7f4' },
   { id: 'five', title: '05 // Philosophy & Atelier', anchor: 'five', label: 'Manifesto', theme: 'dark', color: '#191a1e' },
@@ -700,7 +700,14 @@ export default function Home() {
         <section
           className={`overlap-section ${activeSection === 1 ? 'is-active' : ''}`}
           id="two"
-          style={{ backgroundColor: '#ccd2d9', color: '#1a1918' }}
+          style={{
+            backgroundImage: `linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.65) 45%, rgba(255, 255, 255, 0.45) 80%, rgba(255, 255, 255, 0.65) 100%), url('/images/section2_paint_bg.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center bottom',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: '#ffffff',
+            color: '#1a1918',
+          }}
         >
           <div className="site-container section-content-wrap">
             <div className="museum-salon-grid">
